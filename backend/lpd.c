@@ -815,6 +815,20 @@ lpd_queue(const char      *hostname,	/* I - Host to connect to */
       }
 
      /*
+      * Don't use port if it's not compliant with RFC 1179.
+      */
+
+      if ( lport < 721 && reserve == RESERVE_RFC1179 )
+      {
+        close(fd);
+        lport = 731;
+        _cupsLangPrintFilter(stderr, "DEBUG",
+			     _("Unable to reserve RFC1179-compliant port."));
+        sleep(1);
+        continue;
+      }
+
+     /*
       * Connect to the printer or server...
       */
 
